@@ -50,11 +50,12 @@ The-Geopolitical-Shock-Commodity-Predictor/
 │
 ├── notebooks/
 │   ├── 01_data_collection.ipynb
-│   ├── 02_eda.ipynb                    # (coming soon)
-│   ├── 03_nlp_pipeline.ipynb           # (coming soon)
-│   ├── 04_feature_engineering.ipynb    # (coming soon)
-│   ├── 05_modeling.ipynb               # (coming soon)
-│   └── 06_evaluation.ipynb             # (coming soon)
+│   ├── 02_data_cleaning.ipynb
+│   ├── 03_eda.ipynb                    # (coming soon)
+│   ├── 04_nlp_pipeline.ipynb           # (coming soon)
+│   ├── 05_feature_engineering.ipynb    # (coming soon)
+│   ├── 06_modeling.ipynb               # (coming soon)
+│   └── 07_evaluation.ipynb             # (coming soon)
 │
 ├── src/                      # Reusable Python modules
 ├── app/                      # Streamlit web app
@@ -70,7 +71,7 @@ The-Geopolitical-Shock-Commodity-Predictor/
 ## Methodology
 
 - [x] **Phase 1: Data Collection** — Download news headlines from Kaggle, pull Oil & Gold prices via yfinance, validate all datasets
-- [ ] **Phase 2: Data Cleaning & Merging** — Standardize dates, handle weekends/holidays, aggregate daily news, merge into a single master dataset
+- [x] **Phase 2: Data Cleaning & Merging** — Standardize dates, handle weekends/holidays, aggregate daily news, merge into a single master dataset
 - [ ] **Phase 3: Exploratory Data Analysis (EDA)** — Timeline overlays, keyword spike analysis, lag correlations, Granger causality tests, event studies
 - [ ] **Phase 4: NLP Pipeline** — Fine-tune BERT for geopolitical risk classification, build keyword-based risk index, score each day
 - [ ] **Phase 5: Feature Engineering** — Create model-ready features: sentiment scores, keyword frequencies, price lags, volatility metrics
@@ -126,17 +127,27 @@ The-Geopolitical-Shock-Commodity-Predictor/
 
 ## Current Status
 
-> **Phase 1 — Data Collection: ✅ Complete**
+> **Phase 2 — Data Cleaning & Merging: ✅ Complete**
 
-All three datasets have been successfully downloaded and validated:
+### Phase 1 — Data Collection ✅
+All three datasets successfully downloaded and validated:
 - **1,244,184** news headlines spanning Feb 2003 – Dec 2021
 - **4,775** trading days of Crude Oil price data
 - **4,771** trading days of Gold price data
-- Zero null values across all datasets
 
 Initial analysis revealed declining news headline volume from ~2016 onward (a data source issue, not a world events change). This will be addressed through feature normalization in later phases.
 
-**Next up:** Phase 2 — Data Cleaning & Merging.
+### Phase 2 — Data Cleaning & Merging ✅
+All datasets cleaned, standardized, and merged into a single `master_dataset.csv`:
+- Flattened yfinance multi-level column headers and prefixed with `oil_` / `gold_`
+- Converted all price columns to proper numeric types
+- Aggregated **1.2M headlines** into daily counts + concatenated text per day
+- Rolled forward weekend/holiday news to the next trading day using `np.searchsorted`
+- Final dataset: **4,770 trading days × 13 columns**, zero null values
+- Oil price range: $-37.63 – $145.29 | Gold: $321.50 – $2,051.50
+- Avg **260 headlines/day**, with 38 trading days having no matching news
+
+**Next up:** Phase 3 — Exploratory Data Analysis (EDA).
 
 ---
 
