@@ -53,7 +53,7 @@ The-Geopolitical-Shock-Commodity-Predictor/
 │   ├── 02_data_cleaning.ipynb
 │   ├── 03_eda.ipynb
 │   ├── 04_nlp_pipeline.ipynb
-│   ├── 05_feature_engineering.ipynb    # (coming soon)
+│   ├── 05_feature_engineering.ipynb
 │   ├── 06_modeling.ipynb               # (coming soon)
 │   └── 07_evaluation.ipynb             # (coming soon)
 │
@@ -74,7 +74,7 @@ The-Geopolitical-Shock-Commodity-Predictor/
 - [x] **Phase 2: Data Cleaning & Merging** — Standardize dates, handle weekends/holidays, aggregate daily news, merge into a single master dataset
 - [x] **Phase 3: Exploratory Data Analysis (EDA)** — Timeline overlays, keyword spike analysis, lag correlations, Granger causality tests, event studies
 - [x] **Phase 4: NLP Pipeline** — Keyword-based geopolitical risk scoring + FinBERT financial sentiment on 1.2M headlines, combined into hybrid risk score
-- [ ] **Phase 5: Feature Engineering** — Create model-ready features: sentiment scores, keyword frequencies, price lags, volatility metrics
+- [x] **Phase 5: Feature Engineering** — 44 engineered features: lag/rolling NLP scores, volatility metrics, price lags, day-of-week effects. Time-series train/test split
 - [ ] **Phase 6: Modeling & Evaluation** — Train XGBoost + logistic regression baseline, evaluate with proper metrics, analyze feature importance
 - [ ] **Phase 7: Web Application** — Build "Commodity Risk Radar" in Streamlit for real-time risk assessment
 
@@ -127,7 +127,7 @@ The-Geopolitical-Shock-Commodity-Predictor/
 
 ## Current Status
 
-> **Phase 4 — NLP Pipeline: ✅ Complete**
+> **Phase 5 — Feature Engineering: ✅ Complete**
 
 ### Phase 1 — Data Collection ✅
 All three datasets successfully downloaded and validated:
@@ -151,14 +151,20 @@ Key statistical findings:
 
 ### Phase 4 — NLP Pipeline ✅
 Two-layer NLP risk scoring applied to all 1.2M headlines:
-- **Keyword scoring:** Dictionary of ~95 geopolitical terms across 6 categories (military, terrorism, political crisis, nuclear, economic shock, geopolitical actors). 12% of headlines contain risk keywords
+- **Keyword scoring:** Dictionary of ~95 geopolitical terms across 6 categories. 12% of headlines contain risk keywords
 - **FinBERT sentiment:** Processed all 1.2M headlines on GPU using `ProsusAI/finbert`. Mean fear score: 0.30, max: 0.97
 - **Hybrid risk score:** Combined keyword + FinBERT signals with min-max normalization
-- Both signals show clear spikes during known crises (Iraq War 2003, 2008 crisis, COVID 2020)
-- FinBERT maintains signal strength in post-2016 data where keyword frequency declines
-- 5 new features added to master dataset: `keyword_risk_ratio`, `finbert_mean_neg`, `finbert_max_neg`, `finbert_high_fear_count`, `hybrid_risk_score`
+- 5 new features added to master dataset
 
-**Next up:** Phase 5 — Feature Engineering (price lags, volatility metrics, model-ready feature matrix).
+### Phase 5 — Feature Engineering ✅
+Created model-ready feature matrix with **44 features** and time-series train/test split:
+- **Target variable:** Binary volatility spike prediction (90th percentile absolute return, one day ahead). Oil threshold: 3.72%, Gold: 1.77%
+- **Lag features (23):** 1-5 day lags for NLP risk scores, 1-3 day lags for returns/volumes
+- **Rolling features (11):** 5-day and 20-day windows for risk, returns, and volatility. Risk change indicators
+- **Time-series split:** Train on 3,800 days (2003–2018), test on 950 days (2018–2021). No future leakage
+- **Correlation analysis:** Volatility clustering dominates (20-day vol: r=0.34 for oil). NLP features `finbert_neg_roll5` and `hybrid_risk_roll20` rank 9th-10th for oil predictions — a real but secondary signal
+
+**Next up:** Phase 6 — Modeling & Evaluation (XGBoost + logistic regression baseline).
 
 ---
 
