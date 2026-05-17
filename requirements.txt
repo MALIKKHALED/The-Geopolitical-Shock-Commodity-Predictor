@@ -10,4 +10,4 @@ xgboost
 scikit-learn
 scipy
 statsmodels
-streamlit
+joblib
